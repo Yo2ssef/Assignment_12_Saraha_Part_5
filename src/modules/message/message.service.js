@@ -42,12 +42,13 @@ const getMessageWithSender = async (message) => {
 }
 
 export const createMessage = async ({ content, receiverId }, files = [], user = undefined) => {
+    if (user && user._id === receiverId) throw ConflictException("You cannot send a message to yourself.")
     const checkReceiverId = await findById({
         model: UserModel,
         id: receiverId
     })
     if (!checkReceiverId) throw NotFoundException("Receiver not found.")
-
+        
     const message = await createOne({
         model: MessageModel,
         data: {
