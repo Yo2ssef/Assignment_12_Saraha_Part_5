@@ -1,5 +1,5 @@
 import { IdentityRequestStatusEnum } from '../../common/enums/index.js';
-import { ConflictException, NotFoundException } from '../../common/executions/error.exception.js';
+import { BadRequestException, ConflictException, NotFoundException } from '../../common/executions/error.exception.js';
 import { createOne, deleteOne, find, findById, findOne, findOneAndUpdate, paginate } from '../../common/repository/index.js';
 import { decrypt } from '../../common/security/index.js';
 import { ChatModel, MessageModel, UserModel } from '../../database/models/index.js';
@@ -42,7 +42,7 @@ const getMessageWithSender = async (message) => {
 }
 
 export const createMessage = async ({ content, receiverId }, files = [], user = undefined) => {
-    if (user && user._id === receiverId) throw ConflictException("You cannot send a message to yourself.")
+    if (user && user._id.toString() === receiverId) throw BadRequestException("You cannot send a message to yourself.")
     const checkReceiverId = await findById({
         model: UserModel,
         id: receiverId
